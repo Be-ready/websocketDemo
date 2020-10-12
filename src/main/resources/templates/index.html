@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/socket.js"></script>
+    <script src="/js/stomp.js"></script>
+</head>
+<body>
+<div>
+    <button type="button" onclick="loadXMLDoc()">传输消息1</button>
+    <button type="button" onclick="loadXMLDoc2()">传输消息2</button>
+</div>
+
+</body>
+<script>
+
+    var websocket = new SockJS("/websocket");
+
+    stompClient = Stomp.over(websocket);
+    stompClient.connect({},function (frame) {
+        // alert(frame);
+        //subscribe订阅(可以向以下步骤订阅多个，比如每个用户一个链接)
+        stompClient.subscribe('/user/1/messCount',function (res) {
+            alert("this is res.Data "+res.body);
+        });
+        stompClient.subscribe('/user/2/messCount',function (res) {
+            alert("this is res.Data "+res.body);
+        })
+    });
+    function loadXMLDoc() {
+        // 前缀为/user/的链接都会进入消息代理
+        $.ajax({ url: "/user/t1", context: document.body, success: function(){
+                // alert("sss");
+            }});
+    }
+    function loadXMLDoc2() {
+        // 前缀为/user/的链接都会进入消息代理
+        $.ajax({ url: "/user/t2", context: document.body, success: function(){
+            }});
+    }
+    //
+    // websocket.onopen=function (ev) {
+    //     console.log('建立连接！');
+    // };
+    // websocket.onclose=function (ev) {
+    //     console.log('连接关闭！');
+    // };
+    // websocket.onmessage=function (ev) {
+    //     console.log('收到消息：' + ev.data);
+    //     //弹窗提醒，播放消息
+    //     $('#myModal').modal('show');
+    // };
+    // window.onbeforeunload=function (ev) {
+    //     websocket.close();
+    // }
+</script>
+</html>
